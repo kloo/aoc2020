@@ -11,11 +11,24 @@ $mask = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 $bitLength = 36
 $xCount = 36
 #$memTable.Add($key,$value)
+$startNum = 0
+$countArray = @()
 
 foreach ($line in $strarray) {
     if ($line.StartsWith("ma")) {
         $mask = $line.Substring(7)
         $xCount = $mask.Length - $mask.replace("X","").Length
+        $startNum = [Math]::Pow(2,$xCount) - 1
+
+        $countArray = @()
+        for ($i = $startNum; $i -ge 0;$i--) {
+            [string]$binaryX = [convert]::ToString($i,2)
+            while ($binaryX.Length -lt $xCount) {
+                $binaryX = "0" + $binaryX
+            }
+
+            $countArray += $binaryX
+        }
     } elseif ($line.StartsWith("me")) {
         $initAddress = [convert]::ToInt64(($line.Substring($line.IndexOf("[") + 1, $line.IndexOf("]") - $line.IndexOf("[") - 1)))
         $value = [convert]::ToInt64($line.Substring($line.IndexOf("=") + 2))
@@ -29,27 +42,32 @@ foreach ($line in $strarray) {
         }
         $maskedAddress = $padding + $maskedAddress
 
-        $newAddress = ""
+        $tempAddress = ""
 
         for ($i = 0; $i -lt $bitLength;$i++) {
-            $currMaskChar = $maskedAddress[$i]
+            $currMaskChar = $mask[$i]
             if ($currMaskChar -eq "1") {
-                $newAddress += "1"
-            } elseif ($currMaskChar -eq "0") {
-                $newAddress += $initAddress[$i]
+                $tempAddress += "1"
+            } elseif ($currMaskChar -eq "X") {
+                $tempAddress += "X"
             } else {
-                $newAddress += "X"
+                $tempAddress += $maskedAddress[$i]
             }
         }
 
+        foreach ($binaryNum in $countArray) {
+            $insertAddress = $tempAddress
 
+            for ($i = 0;$i -lt $xCount;$i++) {
+                $insertAddress = $insertAddress.Substring(0,$insertAddress.IndexOf("X")) + $binaryNum[$i] + $insertAddress.Substring($insertAddress.IndexOf("X") + 1)
+            }
 
-        <#
-        if ($memTable.ContainsKey($address)) {
-            $memTable[$address] = $newVal
-        } else {
-            $memTable.Add($address,$newVal)
-        }#>
+            if ($memTable.ContainsKey($insertAddress)) {
+                $memTable[$insertAddress] = $value
+            } else {
+                $memTable.Add($insertAddress,$value)
+            }
+        }
     }
 }
 
