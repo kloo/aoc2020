@@ -1,0 +1,19 @@
+dairy : kktsjbh zfcqk
+fish : mdtvbb kdqls
+nuts : ggdbl frpvd
+peanuts : frpvd kdqls
+sesame : mgczn ggdbl kdqls
+shellfish : mgczn zsfzq mdtvbb frpvd zfcqk
+soy : kdqls
+wheat : mdtvbb kktsjbh kdqls
+
+dairy : zfcqk
+fish : mdtvbb
+nuts : ggdbl
+peanuts : frpvd
+sesame : mgczn
+shellfish : zsfzq
+soy : kdqls
+wheat : kktsjbh
+
+zfcqk,mdtvbb,ggdbl,frpvd,mgczn,zsfzq,kdqls,kktsjbh
